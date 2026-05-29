@@ -2,7 +2,7 @@
 
 **Large-Scale Knowledge Graph Generation Using a Diffusion Approach**
 
-[![Paper](https://img.shields.io/badge/Paper-CEUR_WS-blue)](https://ceur-ws.github.io/)
+[![Paper](https://img.shields.io/badge/Paper-HAL-blue)](https://hal.science/hal-05410352/document)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Official code for the paper *"FGdiffusion: Large-Scale Knowledge Graph Generation Using a Diffusion Approach"* (Adrien Bufort, Lionel Tailhardat, 2025).
