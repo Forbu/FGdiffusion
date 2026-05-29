@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "fgdiffusion"
+version = "0.1.0"
+description = "Large-Scale Knowledge Graph Generation Using a Diffusion Approach"
+authors = ["Adrien Bufort <adrien.bufort@orange.com>", "Lionel Tailhardat <lionel.tailhardat@orange.com>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/yourusername/FGdiffusion"
+keywords = ["graph-generation", "diffusion-models", "knowledge-graphs", "deep-generative-models"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+torch = "^2.1.0"
+networkx = "^3.1"
+torch-geometric = "^2.4.0"
+lightning = "^2.1.0"
+x-transformers = "^1.26"
+matplotlib = "^3.7"
+pytest = "^7.4"
+einops = "^0.7"
+tensorboardX = "^2.6"
+heavyball = {version = "^2", optional = true}
+pandas = "^2.0"
+pyarrow = "^14.0"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

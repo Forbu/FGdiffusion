@@ -1,0 +1,49 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# PyTorch
+*.ckpt
+*.pt
+!scripts_training/datasets/*.pt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Training artifacts
+logs/
+wandb/
+lightning_logs/
+
+# Graph visualizations (generated during training)
+graph_visu/*.png
+
+# Poetry
+poetry.lock
+
+# Large data files (download separately)
+data_kg/**/*.parquet
+scripts_training/datasets/
+
+# Paper source (if any LaTeX artifacts)
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
