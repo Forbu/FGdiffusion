@@ -17,24 +17,13 @@ FGdiffusion is a framework for generating graphs — including knowledge graphs 
 - **Graph flattening via BFS ordering**: Graphs are serialized into edge-index sequences using BFS node ordering, enabling transformer-based models to process graphs as token sequences.
 - **Knowledge graph generation**: We extend the approach to generate typed knowledge graphs with node and edge labels.
 
-### Architecture
-
-<p align="center">
-  <img src="images/planar_generation_llada.png" width="45%" alt="Planar graph generation">
-  &nbsp;&nbsp;
-  <img src="images/planar_graph_gen.png" width="45%" alt="Planar graph generation detail">
-</p>
-
 ## Implemented Models
 
 | Model | Type | File | Reference |
 |-------|------|------|-----------|
-| **GRAN** | Autoregressive (GNN) | `deepgraphgen/models/gran.py` | [Liao et al., 2019](https://arxiv.org/abs/1910.00760) |
-| **GraphGDP** | Continuous diffusion | `deepgraphgen/models/graph_gdp.py` | [Chen et al., 2023](https://arxiv.org/abs/2212.01842) |
-| **GraphVAE** | Variational autoencoder | `deepgraphgen/models/graph_vae.py` | [Simonovsky & Komodakis, 2018](https://arxiv.org/abs/1802.03480) |
 | **G2PT (Autoregressive)** | Autoregressive Transformer | `deepgraphgen/trainers/trainer_g2pt_auto.py` | [Mao et al., 2025](https://arxiv.org/abs/2501.01073) |
 | **G2PT + LLaDA** | Discrete diffusion | `deepgraphgen/trainers/trainer_g2pt_llada.py` | [Xie et al., 2025](https://arxiv.org/abs/2502.09992) |
-| **G2PT + Score Diffusion** | Score-based discrete diffusion | `deepgraphgen/trainers/trainer_g2pt_score.py` | Based on [SEDD](https://arxiv.org/abs/2310.16834) |
+| **G2PT + Score Diffusion** | Score-based discrete diffusion | `deepgraphgen/trainers/trainer_g2pt_score.py` | Based on [SEDD](https://arxiv.org/abs/2310.16834) 
 | **G2PT + KG (NASA)** | KG generation with labels | `deepgraphgen/trainers/trainer_g2pt_llada_kg.py` | This paper |
 
 ## Installation
@@ -53,10 +42,6 @@ git clone https://github.com/yourusername/FGdiffusion.git
 cd FGdiffusion
 
 # Install dependencies
-pip install poetry
-poetry install
-
-# Or manually:
 pip install torch networkx torch_geometric lightning x-transformers matplotlib pytest heavyball tensorboardX einops
 ```
 
@@ -130,13 +115,7 @@ Results on synthetic graph datasets (MMD metrics — lower is better):
 ```
 FGdiffusion/
 ├── deepgraphgen/
-│   ├── models/                  # Model architectures
-│   │   ├── gran.py              # GRAN (autoregressive GNN)
-│   │   ├── graph_gdp.py         # GraphGDP (continuous diffusion)
-│   │   └── graph_vae.py         # GraphVAE
 │   ├── trainers/                # Training modules (PyTorch Lightning)
-│   │   ├── trainer_gran.py
-│   │   ├── trainer_graph_gdp.py
 │   │   ├── trainer_g2pt_auto.py # Autoregressive G2PT
 │   │   ├── trainer_g2pt_llada.py # G2PT + LLaDA discrete diffusion
 │   │   ├── trainer_g2pt_score.py # G2PT + score-based diffusion
