@@ -21,7 +21,6 @@ FGdiffusion is a framework for generating graphs — including knowledge graphs 
 
 | Model | Type | File | Reference |
 |-------|------|------|-----------|
-| **G2PT (Autoregressive)** | Autoregressive Transformer | `deepgraphgen/trainers/trainer_g2pt_auto.py` | [Mao et al., 2025](https://arxiv.org/abs/2501.01073) |
 | **G2PT + LLaDA** | Discrete diffusion | `deepgraphgen/trainers/trainer_g2pt_llada.py` | [Xie et al., 2025](https://arxiv.org/abs/2502.09992) |
 | **G2PT + Score Diffusion** | Score-based discrete diffusion | `deepgraphgen/trainers/trainer_g2pt_score.py` | Based on [SEDD](https://arxiv.org/abs/2310.16834) 
 | **G2PT + KG (NASA)** | KG generation with labels | `deepgraphgen/trainers/trainer_g2pt_llada_kg.py` | This paper |
@@ -125,18 +124,6 @@ FGdiffusion/
 └── README.md
 ```
 
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@inproceedings{bufort2025fgdiffusion,
-  title={FGdiffusion: Large-Scale Knowledge Graph Generation Using a Diffusion Approach},
-  author={Bufort, Adrien and Tailhardat, Lionel},
-  booktitle={CEUR Workshop Proceedings},
-  year={2025}
-}
-```
 
 ## License
 
