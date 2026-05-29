@@ -93,16 +93,6 @@ Graphs are flattened into sequences of edge tokens using the following approach:
 3. **Padding**: Edge sequences are padded to a fixed length based on the `edges_to_node_ratio`
 4. **Mask tokens**: A special `[MASK]` token (index `nb_max_node + 2`) is used for discrete diffusion
 
-## Results
-
-Results on synthetic graph datasets (MMD metrics — lower is better):
-
-| Model | Dataset | MMD Degree | MMD Clustering | MMD Orbits |
-|-------|---------|------------|----------------|------------|
-| G2PT + LLaDA | Planar | 0.0955 | 0.0946 | 0.2298 |
-| G2PT + LLaDA | Tree | 0.0138 | 0.0059 | 0.1819 |
-| G2PT + SEDD | Tree | 0.0183 | 0.0000 | 0.2641 |
-
 ### Key Findings
 
 - **Graph Transformers outperform GNNs** for graph generation, especially in diffusion setups
