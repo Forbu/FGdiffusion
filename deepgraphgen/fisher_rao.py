@@ -223,7 +223,8 @@ def endpoint_velocity(
     """
     log = log_map(x_t, x1_hat)
     one_minus_t = (1 - t).clamp(min=eps)
-    if one_minus_t.dim() < log.dim():
+    # Broadcast to match log shape: (B,) -> (B,1,1) for (B,L,V) input
+    while one_minus_t.dim() < log.dim():
         one_minus_t = one_minus_t.unsqueeze(-1)
     return log / one_minus_t
 
