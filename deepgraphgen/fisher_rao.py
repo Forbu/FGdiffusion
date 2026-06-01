@@ -201,29 +201,31 @@ def exp_map(x_t: torch.Tensor, v: torch.Tensor) -> torch.Tensor:
 
 
 def endpoint_velocity(
-    x_t: torch.Tensor, x1_hat: torch.Tensor, t: torch.Tensor
+    x_t: torch.Tensor, x1_hat: torch.Tensor, t: torch.Tensor, eps: float = 1e-2
 ) -> torch.Tensor:
     """
     Compute the endpoint-parametrized velocity on the sphere.
 
     u_t(x_t | x1_hat) = log_{x_t}(x1_hat) / (1 - t)
 
-    This is the continuous analogue of the straight-line velocity
-    (x1 - x_t)/(1-t) but on the curved Fisher-Rao manifold.
+    When t → 1: x_t ≈ x1 so log_{x_t}(x1) → 0, and (1-t) → 0.
+    The ratio is well-defined but numerically 0/0. Clamping (1-t) ≥ eps
+    makes this 0/eps ≈ 0 near t=1, which is correct (no signal needed).
 
     Args:
         x_t: (..., d) current point on sphere
         x1_hat: (..., d) predicted endpoint on sphere
-        t: (...) time in [0, 1), clamped away from 1
+        t: (...) time in [0, 1]
+        eps: minimum value for (1-t) to prevent singularity
 
     Returns:
         (..., d) velocity tangent vector at x_t
     """
     log = log_map(x_t, x1_hat)
-    t_clamp = t.clamp(max=1.0 - 1e-4)
-    if t_clamp.dim() < log.dim():
-        t_clamp = t_clamp.unsqueeze(-1)
-    return log / (1 - t_clamp)
+    one_minus_t = (1 - t).clamp(min=eps)
+    if one_minus_t.dim() < log.dim():
+        one_minus_t = one_minus_t.unsqueeze(-1)
+    return log / one_minus_t
 
 
 def euler_step(
@@ -245,11 +247,11 @@ def euler_step(
     Returns:
         (..., d) updated point on sphere
     """
-    t_tensor = torch.tensor(t, device=x_t.device).clamp(max=1.0 - 1e-4)
-    t_tensor = t_tensor.view(*([1] * (x_t.dim() - 1)), 1)
+    t_tensor = torch.tensor(t, device=x_t.device)
+    one_minus_t = max(1.0 - t, 1e-2)
 
     log = log_map(x_t, x1_hat)
-    u_t = log / (1 - t_tensor)
+    u_t = log / one_minus_t
     step = u_t * dt
     x_next = exp_map(x_t, step)
     return F.normalize(x_next, dim=-1)
