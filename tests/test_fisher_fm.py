@@ -255,6 +255,14 @@ class TestTrainerG2PTFisherFM:
         expected_len = model.nb_max_node * model.edges_to_node_ratio * 2
         assert output.shape == (2, expected_len)
 
+    def test_generate_diverse(self, model):
+        """Different calls should produce different outputs (random x0)."""
+        model.eval()
+        out1 = model.generate_graphs(batch_size=4, nb_steps=5, log=False)
+        out2 = model.generate_graphs(batch_size=4, nb_steps=5, log=False)
+        # Should NOT be identical (random prior)
+        assert not torch.equal(out1, out2), "Generation is deterministic — check random prior"
+
 
 class TestTrainerKGFisherFM:
     """Smoke tests for the KG Fisher-Rao FM trainer."""

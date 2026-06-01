@@ -50,6 +50,7 @@ from deepgraphgen.fisher_rao import (
     euler_step,
     safe_acos,
     sinc_inv,
+    sample_random_prior,
 )
 
 
@@ -212,8 +213,10 @@ class TrainerG2PTFisherFM(pl.LightningModule):
         # Map tokens → sphere
         x1 = token_to_sphere_data(edges_flat, self.vocab_size)
 
-        # Prior broadcast
-        x0 = self.prior.unsqueeze(0).unsqueeze(0).expand_as(x1)
+        # Random prior on S⁺_d (Dirichlet-based, provides stochasticity)
+        x0 = sample_random_prior(
+            x1.shape, self.device, noise=0.1
+        )
 
         # Sample time
         t = stratified_uniform_sample(batch_size, device=self.device)
@@ -283,15 +286,12 @@ class TrainerG2PTFisherFM(pl.LightningModule):
 
         seq_len = self.nb_max_node * self.edges_to_node_ratio * 2
 
-        # Start from prior
-        x_t = (
-            self.prior
-            .unsqueeze(0)
-            .unsqueeze(0)
-            .expand(batch_size, seq_len, -1)
-            .clone()
+        # Random starting point on S⁺_d (provides diversity across samples)
+        x_t = sample_random_prior(
+            (batch_size, seq_len, self.vocab_size),
+            self.device,
+            noise=0.1,
         )
-        x_t = F.normalize(x_t, dim=-1)
 
         dt = 1.0 / nb_steps
 
@@ -569,10 +569,10 @@ class TrainerKGFisherFM(pl.LightningModule):
         x1_el = token_to_sphere_data(edge_labels, self.vocab_size_edge_labels)
         x1_nl = token_to_sphere_data(node_labels, self.vocab_size_node_labels)
 
-        # Priors
-        x0_edges = self.prior_edges.unsqueeze(0).unsqueeze(0).expand_as(x1_edges)
-        x0_el = self.prior_edge_labels.unsqueeze(0).unsqueeze(0).expand_as(x1_el)
-        x0_nl = self.prior_node_labels.unsqueeze(0).unsqueeze(0).expand_as(x1_nl)
+        # Priors (random on S⁺_d for stochastic training)
+        x0_edges = sample_random_prior(x1_edges.shape, self.device, noise=0.1)
+        x0_el = sample_random_prior(x1_el.shape, self.device, noise=0.1)
+        x0_nl = sample_random_prior(x1_nl.shape, self.device, noise=0.1)
 
         # Sample time
         t = stratified_uniform_sample(batch_size, device=self.device)
@@ -633,36 +633,24 @@ class TrainerKGFisherFM(pl.LightningModule):
         num_edges = self.nb_edges
         num_nodes = self.nb_max_node
 
-        # Initialize from priors
-        x_t_edges_flat = (
-            self.prior_edges
-            .unsqueeze(0)
-            .unsqueeze(0)
-            .expand(batch_size, num_edges * 2, -1)
-            .clone()
+        # Random starting points on S⁺_d (provides diversity)
+        x_t_edges_flat = sample_random_prior(
+            (batch_size, num_edges * 2, self.vocab_size_edges),
+            self.device, noise=0.1,
         )
-        x_t_edges_flat = F.normalize(x_t_edges_flat, dim=-1)
         x_t_edges_2d = x_t_edges_flat.reshape(
             batch_size, num_edges, 2, self.vocab_size_edges
         )
 
-        x_t_el = (
-            self.prior_edge_labels
-            .unsqueeze(0)
-            .unsqueeze(0)
-            .expand(batch_size, num_edges, -1)
-            .clone()
+        x_t_el = sample_random_prior(
+            (batch_size, num_edges, self.vocab_size_edge_labels),
+            self.device, noise=0.1,
         )
-        x_t_el = F.normalize(x_t_el, dim=-1)
 
-        x_t_nl = (
-            self.prior_node_labels
-            .unsqueeze(0)
-            .unsqueeze(0)
-            .expand(batch_size, num_nodes, -1)
-            .clone()
+        x_t_nl = sample_random_prior(
+            (batch_size, num_nodes, self.vocab_size_node_labels),
+            self.device, noise=0.1,
         )
-        x_t_nl = F.normalize(x_t_nl, dim=-1)
 
         dt = 1.0 / nb_steps
 

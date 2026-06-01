@@ -76,6 +76,35 @@ def sphere_to_token(x: torch.Tensor) -> torch.Tensor:
     return (x ** 2).argmax(dim=-1)
 
 
+def sample_random_prior(
+    shape: tuple, device: torch.device, noise: float = 0.1
+) -> torch.Tensor:
+    """
+    Sample noisy barycenter points on S⁺_d as a stochastic prior.
+
+    Starts from the uniform barycenter 1/√d · 1, adds Gaussian noise
+    projected onto the tangent plane, then re-normalizes to the positive sphere.
+
+    Args:
+        shape: (..., vocab_size) desired output shape
+        device: torch device
+        noise: scale of the tangent noise (default 0.1)
+
+    Returns:
+        Same shape as input, points on S⁺_d near the barycenter
+    """
+    vocab_size = shape[-1]
+    # Barycenter
+    x0 = torch.ones(shape, device=device) / math.sqrt(vocab_size)
+    # Gaussian noise in ambient space
+    v = torch.randn(shape, device=device) * noise
+    # Project onto tangent plane at x0 (orthogonal to x0)
+    v = v - (v * x0).sum(dim=-1, keepdim=True) * x0
+    # Move along tangent and re-normalize onto positive sphere
+    x0 = F.normalize(x0 + v, dim=-1).abs()
+    return x0
+
+
 # ─── Numerically stable helpers ────────────────────────────────────────────
 
 
